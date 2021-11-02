@@ -270,7 +270,8 @@ func (c *client) mainloop(ctx context.Context, params *lookupParams) {
 		}
 
 		if len(entries) > 0 {
-			for k, e := range entries {
+			for k, e_ := range entries {
+				e := e_
 				if e.TTL == 0 {
 					delete(entries, k)
 					delete(sentEntries, k)
@@ -290,8 +291,13 @@ func (c *client) mainloop(ctx context.Context, params *lookupParams) {
 					}
 				}
 				// Submit entry to subscriber and cache it.
-				// This is also a point to possibly stop probing actively for a
+				// This iGins also a point to possibly stop probing actively for a
 				// service entry.
+				if e != nil {
+					fmt.Printf("sending entry e: %+v\n", *e)
+				} else {
+					fmt.Printf("sending entry e: %+v\n", e)
+				}
 				params.Entries <- e
 				sentEntries[k] = e
 				if !params.isBrowsing {
